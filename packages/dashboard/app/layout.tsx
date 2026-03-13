@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LayoutShell } from "./layout-shell";
 
 export const metadata: Metadata = {
   title: "SwarmMind - Autonomous DeFi Intelligence on X Layer",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-gray-950 text-gray-100 antialiased">
-        {children}
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );
