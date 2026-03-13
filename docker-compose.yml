@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  alpha-scout:
+    build:
+      context: .
+      dockerfile: packages/agents/alpha-scout/Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    environment:
+      - ALPHA_SCOUT_PORT=3001
+    depends_on:
+      - portfolio-manager
+    restart: unless-stopped
+
+  risk-oracle:
+    build:
+      context: .
+      dockerfile: packages/agents/risk-oracle/Dockerfile
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env
+    environment:
+      - RISK_ORACLE_PORT=3002
+    depends_on:
+      - portfolio-manager
+    restart: unless-stopped
+
+  trade-executor:
+    build:
+      context: .
+      dockerfile: packages/agents/trade-executor/Dockerfile
+    ports:
+      - "3003:3003"
+    env_file:
+      - .env
+    environment:
+      - TRADE_EXECUTOR_PORT=3003
+    depends_on:
+      - portfolio-manager
+    restart: unless-stopped
+
+  portfolio-manager:
+    build:
+      context: .
+      dockerfile: packages/agents/portfolio-manager/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - PORTFOLIO_MANAGER_PORT=3000
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: packages/dashboard/Dockerfile
+    ports:
+      - "3100:3100"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://portfolio-manager:3000
+    depends_on:
+      - portfolio-manager
+    restart: unless-stopped

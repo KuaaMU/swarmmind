@@ -1,0 +1,28 @@
+{
+  "name": "swarmmind",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.9.0",
+  "description": "Autonomous multi-agent DeFi intelligence network on X Layer",
+  "workspaces": [
+    "packages/contracts",
+    "packages/agents/shared",
+    "packages/agents/alpha-scout",
+    "packages/agents/risk-oracle",
+    "packages/agents/trade-executor",
+    "packages/agents/portfolio-manager",
+    "packages/dashboard"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.0"
+  }
+}
