@@ -20,7 +20,7 @@ const config: HardhatUserConfig = {
     hardhat: {},
     xlayerTestnet: {
       url: process.env.XLAYER_TESTNET_RPC_URL || "https://testrpc.xlayer.tech",
-      chainId: 195,
+      chainId: 1952,
       accounts: [DEPLOYER_KEY],
     },
     xlayer: {
