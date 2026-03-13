@@ -1,8 +1,18 @@
-# SwarmMind
+<p align="center">
+  <img src="assets/banner.svg" alt="SwarmMind Banner" width="800"/>
+</p>
 
-**为 X Layer 代理经济打造的集体 AI 智能网络**
+<p align="center">
+  <a href="./README.md">English</a> | 中文
+</p>
 
-[English](./README.md) | 中文
+<p align="center">
+  <img src="https://img.shields.io/badge/测试-148%20通过-brightgreen" alt="Tests"/>
+  <img src="https://img.shields.io/badge/合约-3%20已部署-blue" alt="Contracts"/>
+  <img src="https://img.shields.io/badge/Agent-4%20自主运行-purple" alt="Agents"/>
+  <img src="https://img.shields.io/badge/链-X%20Layer%20196-orange" alt="Chain"/>
+  <img src="https://img.shields.io/badge/许可证-MIT-gray" alt="License"/>
+</p>
 
 SwarmMind 是一个自主运行的多 AI Agent DeFi 情报网络。4 个专业化 AI Agent 在 X Layer 上发现、评估和执行交易机会，并通过 x402 微支付协议互相付费。
 
@@ -20,24 +30,9 @@ SwarmMind 是一个自主运行的多 AI Agent DeFi 情报网络。4 个专业�
 
 ## 架构
 
-```
-用户 (Dashboard)
-    |
-    v
-[Portfolio Manager] -- 总指挥，解析用户意图
-    |         |         |
-    | x402    | x402    | 内部调用
-    v         v         v
-[Alpha Scout] [Risk Oracle] [Trade Executor]
-  (市场信号)   (风险评估)    (DEX 交易)
-    |              |              |
-    v              v              v
-  OnchainOS     OnchainOS     OnchainOS
-  Market API    Market API    Trade API
-                                 |
-                                 v
-                           X Layer DEX
-```
+<p align="center">
+  <img src="assets/architecture.svg" alt="SwarmMind 架构" width="700"/>
+</p>
 
 ### Agent 角色
 
@@ -119,13 +114,16 @@ npm run build
 ### 运行测试
 
 ```bash
-# 智能合约测试 (29 个测试)
+# 所有测试 (148 个全部通过)
+npm test
+
+# 或单独运行:
+# 智能合约测试 (29 个)
 cd packages/contracts && npx hardhat test
 
-# Agent 单元测试 (94 个测试)
+# Agent 单元测试 (119 个)
+# shared: 47 | alpha-scout: 8 | risk-oracle: 21 | portfolio-manager: 18 | trade-executor: 25
 npx vitest run
-
-# 总计: 123 个测试全部通过
 ```
 
 ### 部署合约

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="420" viewBox="0 0 700 420" fill="none">
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="700" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0a14"/><stop offset="100%" stop-color="#0f0f1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="420" rx="12" fill="url(#bg-grad)"/>
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="60" x2="700" y2="60"/><line x1="0" y1="120" x2="700" y2="120"/>
+    <line x1="0" y1="180" x2="700" y2="180"/><line x1="0" y1="240" x2="700" y2="240"/>
+    <line x1="0" y1="300" x2="700" y2="300"/><line x1="0" y1="360" x2="700" y2="360"/>
+  </g>
+
+  <!-- User / Dashboard -->
+  <rect x="275" y="20" width="150" height="36" rx="8" fill="#1e1e30" stroke="#6b7280" stroke-width="1"/>
+  <text x="350" y="43" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#e5e7eb">User (Dashboard)</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="56" x2="350" y2="90" stroke="#6b7280" stroke-width="1"/>
+  <path d="M346 86l4 6 4-6" fill="#6b7280"/>
+
+  <!-- Portfolio Manager -->
+  <rect x="250" y="92" width="200" height="44" rx="10" fill="#a855f7" fill-opacity="0.1" stroke="#a855f7" stroke-width="1.2"/>
+  <circle cx="275" cy="114" r="8" fill="#a855f7" fill-opacity="0.2" stroke="#a855f7" stroke-width="1"/>
+  <text x="360" y="110" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#c084fc">Portfolio Manager</text>
+  <text x="360" y="126" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#9ca3af">Orchestrator | Port 3000</text>
+
+  <!-- Three arrows down -->
+  <!-- Left arrow (x402) -->
+  <line x1="290" y1="136" x2="140" y2="190" stroke="#a855f7" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="200" y="165" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#a855f7" opacity="0.7">x402</text>
+  <!-- Center arrow (x402) -->
+  <line x1="350" y1="136" x2="350" y2="190" stroke="#a855f7" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="365" y="168" font-family="system-ui, sans-serif" font-size="9" fill="#a855f7" opacity="0.7">x402</text>
+  <!-- Right arrow (direct) -->
+  <line x1="410" y1="136" x2="560" y2="190" stroke="#6b7280" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="500" y="165" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#6b7280" opacity="0.7">direct</text>
+
+  <!-- Alpha Scout -->
+  <rect x="50" y="192" width="180" height="44" rx="10" fill="#3b82f6" fill-opacity="0.1" stroke="#3b82f6" stroke-width="1.2"/>
+  <circle cx="75" cy="214" r="8" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="1"/>
+  <text x="155" y="210" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#60a5fa">Alpha Scout</text>
+  <text x="155" y="226" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#9ca3af">Signals | Port 3001</text>
+
+  <!-- Risk Oracle -->
+  <rect x="260" y="192" width="180" height="44" rx="10" fill="#eab308" fill-opacity="0.1" stroke="#eab308" stroke-width="1.2"/>
+  <circle cx="285" cy="214" r="8" fill="#eab308" fill-opacity="0.2" stroke="#eab308" stroke-width="1"/>
+  <text x="365" y="210" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#facc15">Risk Oracle</text>
+  <text x="365" y="226" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#9ca3af">Risk Scores | Port 3002</text>
+
+  <!-- Trade Executor -->
+  <rect x="470" y="192" width="180" height="44" rx="10" fill="#22c55e" fill-opacity="0.1" stroke="#22c55e" stroke-width="1.2"/>
+  <circle cx="495" cy="214" r="8" fill="#22c55e" fill-opacity="0.2" stroke="#22c55e" stroke-width="1"/>
+  <text x="575" y="210" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#4ade80">Trade Executor</text>
+  <text x="575" y="226" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#9ca3af">DEX Swaps | Port 3003</text>
+
+  <!-- Arrows to OnchainOS -->
+  <line x1="140" y1="236" x2="140" y2="286" stroke="#6b7280" stroke-width="1"/>
+  <path d="M136 282l4 6 4-6" fill="#6b7280"/>
+  <line x1="350" y1="236" x2="350" y2="286" stroke="#6b7280" stroke-width="1"/>
+  <path d="M346 282l4 6 4-6" fill="#6b7280"/>
+  <line x1="560" y1="236" x2="560" y2="286" stroke="#6b7280" stroke-width="1"/>
+  <path d="M556 282l4 6 4-6" fill="#6b7280"/>
+
+  <!-- OnchainOS boxes -->
+  <rect x="70" y="288" width="140" height="36" rx="8" fill="#1e1e30" stroke="#f97316" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="140" y="310" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#fb923c">OKX Market API</text>
+
+  <rect x="280" y="288" width="140" height="36" rx="8" fill="#1e1e30" stroke="#f97316" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="350" y="310" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#fb923c">OKX Market API</text>
+
+  <rect x="490" y="288" width="140" height="36" rx="8" fill="#1e1e30" stroke="#f97316" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="560" y="310" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#fb923c">OKX Trade API</text>
+
+  <!-- Arrow to X Layer -->
+  <line x1="560" y1="324" x2="560" y2="364" stroke="#6b7280" stroke-width="1"/>
+  <path d="M556 360l4 6 4-6" fill="#6b7280"/>
+
+  <!-- X Layer -->
+  <rect x="420" y="366" width="280" height="36" rx="8" fill="#1e1e30" stroke="#22c55e" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="560" y="389" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#4ade80">X Layer DEXs (Chain 196)</text>
+
+  <!-- Bottom left: Contracts -->
+  <rect x="20" y="366" width="360" height="36" rx="8" fill="#1e1e30" stroke="#a855f7" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="200" y="383" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#c084fc">AgentRegistry</text>
+  <text x="200" y="396" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#9ca3af">AgentWalletFactory  |  PaymentSettlement  |  USDC</text>
+</svg>

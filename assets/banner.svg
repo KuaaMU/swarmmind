@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0a14"/>
+      <stop offset="50%" stop-color="#0f0f23"/>
+      <stop offset="100%" stop-color="#0a0a14"/>
+    </linearGradient>
+    <linearGradient id="title-grad" x1="200" y1="50" x2="600" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="40%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="hex-g" x1="50" y1="30" x2="150" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="200" rx="12" fill="url(#bg)"/>
+  <!-- Grid pattern -->
+  <g opacity="0.03" stroke="#ffffff" stroke-width="0.5">
+    <line x1="0" y1="0" x2="0" y2="200"/><line x1="40" y1="0" x2="40" y2="200"/>
+    <line x1="80" y1="0" x2="80" y2="200"/><line x1="120" y1="0" x2="120" y2="200"/>
+    <line x1="160" y1="0" x2="160" y2="200"/><line x1="200" y1="0" x2="200" y2="200"/>
+    <line x1="240" y1="0" x2="240" y2="200"/><line x1="280" y1="0" x2="280" y2="200"/>
+    <line x1="320" y1="0" x2="320" y2="200"/><line x1="360" y1="0" x2="360" y2="200"/>
+    <line x1="400" y1="0" x2="400" y2="200"/><line x1="440" y1="0" x2="440" y2="200"/>
+    <line x1="480" y1="0" x2="480" y2="200"/><line x1="520" y1="0" x2="520" y2="200"/>
+    <line x1="560" y1="0" x2="560" y2="200"/><line x1="600" y1="0" x2="600" y2="200"/>
+    <line x1="640" y1="0" x2="640" y2="200"/><line x1="680" y1="0" x2="680" y2="200"/>
+    <line x1="720" y1="0" x2="720" y2="200"/><line x1="760" y1="0" x2="760" y2="200"/>
+    <line x1="0" y1="40" x2="800" y2="40"/><line x1="0" y1="80" x2="800" y2="80"/>
+    <line x1="0" y1="120" x2="800" y2="120"/><line x1="0" y1="160" x2="800" y2="160"/>
+  </g>
+  <!-- Logo hexagon -->
+  <g transform="translate(80, 100)">
+    <path d="M0 -38L33 -19v38L0 57 -33 38v-38L0 -38z" stroke="url(#hex-g)" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <!-- Nodes -->
+    <circle cx="0" cy="-18" r="5" fill="#3b82f6" fill-opacity="0.4" stroke="#3b82f6" stroke-width="1"/>
+    <circle cx="18" cy="6" r="5" fill="#eab308" fill-opacity="0.4" stroke="#eab308" stroke-width="1"/>
+    <circle cx="0" cy="30" r="5" fill="#22c55e" fill-opacity="0.4" stroke="#22c55e" stroke-width="1"/>
+    <circle cx="-18" cy="6" r="5" fill="#a855f7" fill-opacity="0.4" stroke="#a855f7" stroke-width="1"/>
+    <!-- Lines -->
+    <line x1="-18" y1="6" x2="0" y2="-18" stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+    <line x1="-18" y1="6" x2="18" y2="6" stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+    <line x1="-18" y1="6" x2="0" y2="30" stroke="#a855f7" stroke-width="0.8" opacity="0.3"/>
+    <line x1="0" y1="-18" x2="18" y2="6" stroke="#3b82f6" stroke-width="0.8" opacity="0.25"/>
+  </g>
+  <!-- Title -->
+  <text x="160" y="82" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="48" font-weight="700" fill="url(#title-grad)">SwarmMind</text>
+  <!-- Subtitle -->
+  <text x="160" y="112" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" fill="#9ca3af">Collective AI Intelligence for the Agentic Economy</text>
+  <!-- Tags -->
+  <g transform="translate(160, 130)">
+    <rect x="0" y="0" width="70" height="22" rx="4" fill="#a855f7" fill-opacity="0.12" stroke="#a855f7" stroke-width="0.5" stroke-opacity="0.3"/>
+    <text x="35" y="15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#a855f7">X Layer</text>
+    <rect x="78" y="0" width="90" height="22" rx="4" fill="#3b82f6" fill-opacity="0.12" stroke="#3b82f6" stroke-width="0.5" stroke-opacity="0.3"/>
+    <text x="123" y="15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3b82f6">Multi-Agent</text>
+    <rect x="176" y="0" width="55" height="22" rx="4" fill="#eab308" fill-opacity="0.12" stroke="#eab308" stroke-width="0.5" stroke-opacity="0.3"/>
+    <text x="203" y="15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eab308">x402</text>
+    <rect x="239" y="0" width="100" height="22" rx="4" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="0.5" stroke-opacity="0.3"/>
+    <text x="289" y="15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#22c55e">DeFi Trading</text>
+  </g>
+  <!-- Right side decorative nodes -->
+  <g opacity="0.15">
+    <circle cx="650" cy="50" r="3" fill="#3b82f6"/><circle cx="700" cy="80" r="3" fill="#eab308"/>
+    <circle cx="680" cy="140" r="3" fill="#22c55e"/><circle cx="730" cy="110" r="3" fill="#a855f7"/>
+    <line x1="650" y1="50" x2="700" y2="80" stroke="#6b7280" stroke-width="0.5"/>
+    <line x1="700" y1="80" x2="730" y2="110" stroke="#6b7280" stroke-width="0.5"/>
+    <line x1="730" y1="110" x2="680" y2="140" stroke="#6b7280" stroke-width="0.5"/>
+    <line x1="650" y1="50" x2="680" y2="140" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="3 3"/>
+  </g>
+</svg>

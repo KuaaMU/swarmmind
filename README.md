@@ -1,8 +1,18 @@
-# SwarmMind
+<p align="center">
+  <img src="assets/banner.svg" alt="SwarmMind Banner" width="800"/>
+</p>
 
-English | [中文](./README.zh-CN.md)
+<p align="center">
+  <a href="./README.zh-CN.md">中文</a> | English
+</p>
 
-**Collective AI Intelligence for the Agentic Economy on X Layer**
+<p align="center">
+  <img src="https://img.shields.io/badge/tests-148%20passing-brightgreen" alt="Tests"/>
+  <img src="https://img.shields.io/badge/contracts-3%20deployed-blue" alt="Contracts"/>
+  <img src="https://img.shields.io/badge/agents-4%20autonomous-purple" alt="Agents"/>
+  <img src="https://img.shields.io/badge/chain-X%20Layer%20196-orange" alt="Chain"/>
+  <img src="https://img.shields.io/badge/license-MIT-gray" alt="License"/>
+</p>
 
 SwarmMind is an autonomous multi-agent DeFi intelligence network where specialized AI agents discover, assess, and execute trading opportunities on X Layer, paying each other for services via x402 micropayments.
 
@@ -20,24 +30,9 @@ Built for the [X Layer AI Hackathon](https://x.com/XLayerOfficial) (Phase 1: Mar
 
 ## Architecture
 
-```
-User (Dashboard)
-    |
-    v
-[Portfolio Manager Agent] -- orchestrator, user intent parsing
-    |         |         |
-    | x402    | x402    | direct call
-    v         v         v
-[Alpha Scout] [Risk Oracle] [Trade Executor]
-  (signals)   (risk scores)  (DEX swaps)
-    |              |              |
-    v              v              v
-  OnchainOS     OnchainOS     OnchainOS
-  Market API    Market API    Trade API
-                                 |
-                                 v
-                           X Layer DEXs
-```
+<p align="center">
+  <img src="assets/architecture.svg" alt="SwarmMind Architecture" width="700"/>
+</p>
 
 ### Agent Roles
 
@@ -125,13 +120,16 @@ npm run build
 ### Run Tests
 
 ```bash
+# All tests (148 passing)
+npm test
+
+# Or individually:
 # Smart contract tests (29 tests)
 cd packages/contracts && npx hardhat test
 
-# Agent unit tests (94 tests)
+# Agent unit tests (119 tests)
+# shared: 47 | alpha-scout: 8 | risk-oracle: 21 | portfolio-manager: 18 | trade-executor: 25
 npx vitest run
-
-# All tests combined: 123 passing
 ```
 
 ### Deploy Contracts
@@ -174,6 +172,7 @@ cd packages/agents/portfolio-manager && npm run dev
 ```bash
 cd packages/dashboard && npm run dev
 # Open http://localhost:3100
+# Works without backend - auto-activates demo mode with simulated agent activity
 ```
 
 ## Smart Contracts
