@@ -1,5 +1,7 @@
 # SwarmMind
 
+English | [中文](./README.zh-CN.md)
+
 **Collective AI Intelligence for the Agentic Economy on X Layer**
 
 SwarmMind is an autonomous multi-agent DeFi intelligence network where specialized AI agents discover, assess, and execute trading opportunities on X Layer, paying each other for services via x402 micropayments.
