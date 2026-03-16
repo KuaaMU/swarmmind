@@ -9,7 +9,7 @@
 
 | Field | Value |
 |-------|-------|
-| Report ID | SR-YYYY-MM-DD-NNN |
+| Report ID | SR-YYYY-MM-DD-NNN <!-- NNN = sequential number: 001, 002, … --> |
 | Period covered | YYYY-MM-DD → YYYY-MM-DD |
 | Author | <name> |
 | Audience | <team / stakeholder> |
