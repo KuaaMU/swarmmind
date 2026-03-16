@@ -1,6 +1,11 @@
+/**
+ * Legacy type aliases – kept for backward compatibility.
+ * New code should import from "./schemas" directly to get Zod-validated types.
+ */
+
 // ===== Agent Types =====
 
-export type AgentRole = "SCOUT" | "ORACLE" | "EXECUTOR" | "MANAGER";
+export type AgentRole = "SCOUT" | "ORACLE" | "EXECUTOR" | "MANAGER" | "RISK" | "LIQUIDITY";
 
 export interface AgentInfo {
   readonly address: string;

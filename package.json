@@ -11,6 +11,8 @@
     "packages/agents/risk-oracle",
     "packages/agents/trade-executor",
     "packages/agents/portfolio-manager",
+    "packages/agents/liquidity-agent",
+    "packages/consensus",
     "packages/dashboard"
   ],
   "scripts": {
