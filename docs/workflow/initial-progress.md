@@ -41,6 +41,7 @@
 | 1 | Missing `typecheck` scripts in packages | **Mitigated** | Added `"typecheck": { "dependsOn": ["^build"] }` to `turbo.json`. Packages that define a `typecheck` script will run; others will be skipped. Follow-up: add `"typecheck": "tsc --noEmit"` to each package's `package.json` in Sprint 2. |
 | 2 | No root ESLint config | **Open / Documented** | The lint step in CI will run whatever `turbo run lint` resolves to per package. The `dashboard` package (Next.js) likely has its own ESLint config. Contracts package uses Solhint (separate). A root `.eslintrc` is scheduled for Sprint 2. |
 | 3 | Hardhat contract tests in CI | **Mitigated** | Hardhat runs an in-process Hardhat Network by default — no external node needed. Tests should pass in CI. If they fail due to missing env vars (RPC keys), the test suite should be updated to use `hardhat` network exclusively for unit tests. |
+| 4 | `next lint` deprecated in Next.js 15; fails in CI (no ESLint config → interactive prompt → stdin not available) | **Resolved** | Replaced `"lint": "next lint"` with `"lint": "tsc --noEmit"` in `packages/dashboard/package.json`. Also added `"typecheck": "tsc --noEmit"`. TypeScript is already installed and `tsconfig.json` has `"noEmit": true`. Full ESLint setup (with `eslint-config-next`) is scheduled for Sprint 2. |
 
 ---
 
