@@ -290,6 +290,41 @@ AI_BASE_URL=https://api.your-relay.com
 
 Default models: Claude Haiku 4.5 (anthropic), GPT-4o-mini (openai), DeepSeek Chat (deepseek).
 
+## Execution Workflow / 执行工作流
+
+> Full details: [`docs/workflow/execution-plan.md`](docs/workflow/execution-plan.md)
+
+### Branch Strategy
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Protected; production-ready |
+| `feat/<scope>-<description>` | New features → PR to `main` |
+| `fix/<scope>-<description>` | Bug fixes → PR to `main` |
+| `chore/<description>` | CI, tooling, docs → PR to `main` |
+| `hotfix/<description>` | Critical patches → direct to `main` |
+
+### PR Granularity & Commit Convention
+
+- One PR = one logical unit of change.
+- Use [Conventional Commits](https://www.conventionalcommits.org/): `feat(scope): summary`, `fix(scope): summary`, etc.
+- PRs must pass all CI gates (lint, typecheck, test, build) before merge.
+
+### Self-Audit Before Every Report
+
+Before opening a PR or filing a status update, authors must complete the checklist in  
+[`docs/workflow/self-audit-template.md`](docs/workflow/self-audit-template.md):
+
+1. **Changes Made** — What was modified and why.
+2. **Problems Encountered** — Every blocker or uncertainty.
+3. **Resolution** — Outcome for each problem (resolved / mitigated / deferred).
+
+### Risk & Rollback
+
+- Rollback procedures: [`docs/runbooks/rollback.md`](docs/runbooks/rollback.md)
+- Incident response: [`docs/runbooks/incident-checklist.md`](docs/runbooks/incident-checklist.md)
+- Status report template: [`docs/status-report-template.md`](docs/status-report-template.md)
+
 ## License
 
 MIT
