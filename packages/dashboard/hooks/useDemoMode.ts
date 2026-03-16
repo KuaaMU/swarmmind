@@ -42,6 +42,49 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
   const [orchestrationStep, setOrchestrationStep] = useState<OrchestrationStep>("IDLE");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const updateAgentFinancials = useCallback(
+    (receiverName: string, senderName: string, amount: number) => {
+      setAgents((prev) =>
+        prev.map((a) => {
+          if (a.name === receiverName) {
+            const newEarnings = parseFloat(a.totalEarnings) + amount;
+            const newBalance = parseFloat(a.walletBalance) + amount;
+            return {
+              ...a,
+              totalEarnings: newEarnings.toFixed(4),
+              walletBalance: newBalance.toFixed(4),
+              lastActivity: Date.now(),
+              isOnline: true,
+            };
+          }
+          if (a.name === senderName) {
+            const newSpending = parseFloat(a.totalSpending) + amount;
+            const newBalance = Math.max(0, parseFloat(a.walletBalance) - amount);
+            return {
+              ...a,
+              totalSpending: newSpending.toFixed(4),
+              walletBalance: newBalance.toFixed(4),
+              lastActivity: Date.now(),
+              isOnline: true,
+            };
+          }
+          return a;
+        })
+      );
+    },
+    []
+  );
+
+  const updateAgentActivity = useCallback((agentName: string) => {
+    setAgents((prev) =>
+      prev.map((a) =>
+        a.name === agentName
+          ? { ...a, lastActivity: Date.now(), isOnline: true }
+          : a
+      )
+    );
+  }, []);
+
   const runOrchestrationCycle = useCallback(() => {
     // Step 1: Signal detected
     const signal = createDemoSignal();
@@ -61,6 +104,7 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
         "RISK_ASSESSMENT"
       );
       setPayments((prev) => [paymentToOracle, ...prev].slice(0, 50));
+      updateAgentFinancials("Risk Oracle", "Portfolio Manager", 0.002);
 
       // Step 3: Trade executed (after another 2s)
       timeoutRef.current = setTimeout(() => {
@@ -77,8 +121,8 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
             "SIGNAL_ANALYSIS"
           );
           setPayments((prev) => [paymentToScout, ...prev].slice(0, 50));
+          updateAgentFinancials("Alpha Scout", "Portfolio Manager", 0.001);
           setOrchestrationStep("PAYMENT_MADE");
-          updateAgentActivity("Portfolio Manager");
 
           // Reset to idle after 1s
           timeoutRef.current = setTimeout(() => {
@@ -87,17 +131,7 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
         }, 1000);
       }, 2000);
     }, 2000);
-  }, []);
-
-  function updateAgentActivity(agentName: string) {
-    setAgents((prev) =>
-      prev.map((a) =>
-        a.name === agentName
-          ? { ...a, lastActivity: Date.now(), isOnline: true }
-          : a
-      )
-    );
-  }
+  }, [updateAgentActivity, updateAgentFinancials]);
 
   useEffect(() => {
     // Start first cycle after 2s

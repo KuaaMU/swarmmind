@@ -12,6 +12,7 @@ import type {
 import { useDemoMode } from "./useDemoMode";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const DEMO_ONLY = process.env.NEXT_PUBLIC_DEMO_ONLY === "true";
 
 type ConnectionStatus = "live" | "demo" | "offline";
 
@@ -25,9 +26,12 @@ function useRealData(): {
   connectionStatus: ConnectionStatus;
 } {
   const [data, setData] = useState<PortfolioData | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("offline");
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    DEMO_ONLY ? "demo" : "offline"
+  );
 
   const fetchPortfolio = useCallback(async () => {
+    if (DEMO_ONLY) return;
     try {
       const res = await fetch(`${API_BASE}/portfolio`);
       if (!res.ok) throw new Error("API error");
@@ -54,6 +58,8 @@ function useRealData(): {
   }, []);
 
   useEffect(() => {
+    if (DEMO_ONLY) return;
+
     fetchPortfolio();
     const interval = setInterval(fetchPortfolio, 5000);
 

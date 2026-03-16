@@ -125,9 +125,11 @@ async function main() {
 
   console.log(`\n=== Registration Complete ===`);
   console.log(`Total agents on-chain: ${count}`);
+  const chainId = (await ethers.provider.getNetwork()).chainId;
+  const explorerPath = chainId === 196n ? "xlayer" : "xlayer-test";
   console.log(`TX hashes:`);
   for (const hash of txHashes) {
-    console.log(`  https://www.oklink.com/xlayer-test/tx/${hash}`);
+    console.log(`  https://www.oklink.com/${explorerPath}/tx/${hash}`);
   }
 }
 
