@@ -2,6 +2,8 @@ import { env, AgentWallet, createAIClientFromEnv } from "@swarmmind/shared";
 import { IntentParser } from "./services/intent-parser";
 import { PortfolioStateManager } from "./services/portfolio-state";
 import { Orchestrator } from "./services/orchestrator";
+import { ReActOrchestrator } from "./services/react-orchestrator";
+import { createAgentTools } from "./tools/agent-tools";
 import { createServer } from "./server";
 
 function getPrivateKey(): string {
@@ -38,10 +40,23 @@ function main(): void {
     state,
   );
 
+  // ReAct Orchestrator (tool-use agent loop)
+  const tools = createAgentTools({
+    alphaScoutUrl: process.env["ALPHA_SCOUT_URL"] || "http://localhost:3001",
+    riskOracleUrl: process.env["RISK_ORACLE_URL"] || "http://localhost:3002",
+    tradeExecutorUrl: process.env["TRADE_EXECUTOR_URL"] || "http://localhost:3003",
+    wallet,
+    facilitatorUrl: env.x402.facilitatorUrl,
+    state,
+  });
+  const reactOrchestrator = new ReActOrchestrator(ai, tools, state);
+  console.log("[PortfolioManager] ReAct orchestrator initialized with", tools.length, "tools");
+
   // Server
   const { start, stop } = createServer({
     port: env.ports.portfolioManager,
     orchestrator,
+    reactOrchestrator,
     intentParser,
     state,
   });

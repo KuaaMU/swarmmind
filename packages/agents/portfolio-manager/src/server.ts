@@ -4,12 +4,15 @@ import { WebSocketServer, WebSocket } from "ws";
 import http from "http";
 import type { WsMessage, ApiResponse } from "@swarmmind/shared";
 import { Orchestrator } from "./services/orchestrator";
+import { ReActOrchestrator } from "./services/react-orchestrator";
+import type { ReasoningTrace } from "./services/react-orchestrator";
 import { IntentParser } from "./services/intent-parser";
 import { PortfolioStateManager } from "./services/portfolio-state";
 
 interface ServerDeps {
   readonly port: number;
   readonly orchestrator: Orchestrator;
+  readonly reactOrchestrator?: ReActOrchestrator;
   readonly intentParser: IntentParser;
   readonly state: PortfolioStateManager;
 }
@@ -18,7 +21,7 @@ export function createServer(deps: ServerDeps): {
   start: () => void;
   stop: () => void;
 } {
-  const { port, orchestrator, intentParser, state } = deps;
+  const { port, orchestrator, reactOrchestrator, intentParser, state } = deps;
   const app = express();
 
   app.use(cors());
@@ -192,6 +195,86 @@ export function createServer(deps: ServerDeps): {
     }
   });
 
+  // --- ReAct Orchestrator Endpoints ---
+
+  app.post("/orchestrate/react", async (req: Request, res: Response) => {
+    try {
+      if (!reactOrchestrator) {
+        const response: ApiResponse<null> = {
+          success: false,
+          data: null,
+          error: "ReAct orchestrator not configured. Set AI_PROVIDER and API key.",
+          timestamp: Date.now(),
+        };
+        res.status(501).json(response);
+        return;
+      }
+
+      let strategy = reactOrchestrator.getStrategy();
+      if (!strategy) {
+        const { strategy: text } = req.body as { strategy?: string };
+        if (text && typeof text === "string") {
+          strategy = await intentParser.parseStrategy(text);
+          reactOrchestrator.setStrategy(strategy);
+        } else if (orchestrator.getStrategy()) {
+          strategy = orchestrator.getStrategy()!;
+          reactOrchestrator.setStrategy(strategy);
+        } else {
+          const response: ApiResponse<null> = {
+            success: false,
+            data: null,
+            error: "No strategy set. POST /strategy first or include 'strategy' in body",
+            timestamp: Date.now(),
+          };
+          res.status(400).json(response);
+          return;
+        }
+      }
+
+      const trace = await reactOrchestrator.runOnce();
+
+      const response: ApiResponse<ReasoningTrace> = {
+        success: true,
+        data: trace,
+        error: null,
+        timestamp: Date.now(),
+      };
+      res.json(response);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      console.error("[Server] POST /orchestrate/react error:", message);
+      const response: ApiResponse<null> = {
+        success: false,
+        data: null,
+        error: `ReAct cycle failed: ${message}`,
+        timestamp: Date.now(),
+      };
+      res.status(500).json(response);
+    }
+  });
+
+  app.get("/reasoning/latest", (_req: Request, res: Response) => {
+    if (!reactOrchestrator) {
+      const response: ApiResponse<null> = {
+        success: false,
+        data: null,
+        error: "ReAct orchestrator not configured",
+        timestamp: Date.now(),
+      };
+      res.status(501).json(response);
+      return;
+    }
+
+    const trace = reactOrchestrator.getLatestTrace();
+    const response: ApiResponse<ReasoningTrace | null> = {
+      success: true,
+      data: trace,
+      error: null,
+      timestamp: Date.now(),
+    };
+    res.json(response);
+  });
+
   // --- HTTP + WebSocket Server ---
 
   const server = http.createServer(app);
@@ -222,6 +305,18 @@ export function createServer(deps: ServerDeps): {
       }
     }
   });
+
+  // Forward ReAct orchestrator events to all WebSocket clients
+  if (reactOrchestrator) {
+    reactOrchestrator.on("ws", (message: WsMessage) => {
+      const payload = JSON.stringify(message);
+      for (const ws of clients) {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(payload);
+        }
+      }
+    });
+  }
 
   function start(): void {
     server.listen(port, () => {
