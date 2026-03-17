@@ -10,6 +10,12 @@ export type { AgentWalletConfig } from "./wallet/agent-wallet";
 // AI (multi-provider)
 export { AIClient, createAIClientFromEnv } from "./ai/ai-client";
 export type { AIProvider, AIResponse, AIClientConfig } from "./ai/ai-client";
+// Tool-use (multi-provider)
+export type { ToolDefinition, ToolCall, ChatWithToolsResult, Message } from "./ai/tool-use";
+export {
+  toAnthropicTools, fromAnthropicResponse, toAnthropicMessages,
+  toOpenAITools, fromOpenAIResponse, toOpenAIMessages,
+} from "./ai/tool-use";
 // Legacy Claude client (backward compat)
 export { ClaudeClient } from "./ai/claude-client";
 export type { ClaudeResponse, ClaudeClientConfig } from "./ai/claude-client";

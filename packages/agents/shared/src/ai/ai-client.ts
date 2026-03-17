@@ -9,6 +9,21 @@
  * - openrouter: Access 100+ models via OpenRouter
  */
 
+import type {
+  ToolDefinition,
+  ChatWithToolsResult,
+  Message,
+} from "./tool-use";
+import {
+  toAnthropicTools,
+  toAnthropicMessages,
+  fromAnthropicResponse,
+  toOpenAITools,
+  toOpenAIMessages,
+  fromOpenAIResponse,
+} from "./tool-use";
+import type { AnthropicResponse, OpenAIResponse } from "./tool-use";
+
 export type AIProvider = "anthropic" | "openai" | "deepseek" | "openrouter";
 
 export interface AIResponse {
@@ -82,6 +97,21 @@ export class AIClient {
 
   getProvider(): AIProvider { return this.provider; }
   getModel(): string { return this.model; }
+
+  /**
+   * Chat with tool-use support. The LLM can request tool calls in its response.
+   * Works with Anthropic native tool_use and OpenAI-compatible function calling.
+   */
+  async chatWithTools(
+    systemPrompt: string,
+    messages: readonly Message[],
+    tools: readonly ToolDefinition[],
+  ): Promise<ChatWithToolsResult> {
+    if (this.provider === "anthropic") {
+      return this.callAnthropicWithTools(systemPrompt, messages, tools);
+    }
+    return this.callOpenAICompatibleWithTools(systemPrompt, messages, tools);
+  }
 
   // --- Anthropic native API ---
   private async callAnthropic(systemPrompt: string, userMessage: string): Promise<AIResponse> {
@@ -168,6 +198,78 @@ export class AIClient {
         outputTokens: data.usage?.completion_tokens || 0,
       },
     };
+  }
+
+  // --- Anthropic tool-use API ---
+  private async callAnthropicWithTools(
+    systemPrompt: string,
+    messages: readonly Message[],
+    tools: readonly ToolDefinition[],
+  ): Promise<ChatWithToolsResult> {
+    const response = await fetch(`${this.baseUrl}/v1/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": this.apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: this.model,
+        max_tokens: this.maxTokens,
+        system: systemPrompt,
+        messages: toAnthropicMessages(messages),
+        tools: toAnthropicTools(tools),
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Anthropic API error ${response.status}: ${errText}`);
+    }
+
+    const data = (await response.json()) as AnthropicResponse;
+    return fromAnthropicResponse(data);
+  }
+
+  // --- OpenAI-compatible tool-use API ---
+  private async callOpenAICompatibleWithTools(
+    systemPrompt: string,
+    messages: readonly Message[],
+    tools: readonly ToolDefinition[],
+  ): Promise<ChatWithToolsResult> {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${this.apiKey}`,
+    };
+
+    if (this.provider === "openrouter") {
+      headers["HTTP-Referer"] = "https://github.com/swarmmind";
+      headers["X-Title"] = "SwarmMind";
+    }
+
+    const openAIMessages = [
+      { role: "system", content: systemPrompt },
+      ...toOpenAIMessages(messages),
+    ];
+
+    const response = await fetch(`${this.baseUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model: this.model,
+        max_tokens: this.maxTokens,
+        messages: openAIMessages,
+        tools: toOpenAITools(tools),
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`${this.provider} API error ${response.status}: ${errText}`);
+    }
+
+    const data = (await response.json()) as OpenAIResponse;
+    return fromOpenAIResponse(data);
   }
 }
 
