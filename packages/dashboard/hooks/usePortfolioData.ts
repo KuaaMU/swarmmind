@@ -3,10 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type {
   AgentStatus,
-  Payment,
-  Trade,
-  TradingSignal,
-  PortfolioSummary,
   PortfolioData,
   ConsensusRound,
   LiquidityPoolDash,

@@ -134,6 +134,13 @@ export class ConsensusEngine {
     const challengeExpiresAt =
       this.config.challengeWindowMs > 0 ? now + this.config.challengeWindowMs : 0;
 
+    // Collect all evidence pointers from proposals that support the winning claim.
+    const winningProposals = output.finalClaim
+      ? proposals.filter((p) => p.claim === output.finalClaim)
+      : proposals;
+    const allEvidenceHashes = winningProposals.flatMap((p) => p.evidencePointers);
+    const evidenceRoot = buildEvidenceRoot(allEvidenceHashes);
+
     const result: ConsensusResult = {
       roundId,
       finalClaim: output.finalClaim,
@@ -143,6 +150,7 @@ export class ConsensusEngine {
       contributions: output.contributions,
       challengeOpen: this.config.challengeWindowMs > 0,
       challengeExpiresAt,
+      evidenceRoot,
       commitHash: buildCommitHash(roundId, output.finalClaim, output.weightedScore),
       timestamp: now,
     };
@@ -252,6 +260,46 @@ function noConsensus(
 function buildCommitHash(roundId: string, claim: string, score: number): string {
   const payload = `${roundId}::${claim}::${score.toFixed(8)}`;
   return createHash("sha256").update(payload).digest("hex");
+}
+
+/**
+ * Compute a Merkle root from an array of evidence pointer strings.
+ *
+ * Steps:
+ *  1. Sort inputs lexicographically for determinism.
+ *  2. Hash each as a leaf node.
+ *  3. Pair and hash adjacent nodes up the tree; duplicate the last node on
+ *     odd-length layers.
+ *  4. Return the single root hash.
+ *
+ * Note: The lexicographic sort in step 1 deviates from conventional Merkle
+ * trees (which preserve insertion order).  Here determinism matters more than
+ * ordering — the evidence root exists solely to allow on-chain verification
+ * that a specific set of evidence pointers was used in a round, regardless of
+ * the order in which agents submitted them.
+ *
+ * An empty input set returns SHA-256("").
+ */
+function buildEvidenceRoot(evidencePointers: readonly string[]): string {
+  if (evidencePointers.length === 0) {
+    return createHash("sha256").update("").digest("hex");
+  }
+
+  let layer: string[] = [...evidencePointers]
+    .sort()
+    .map((p) => createHash("sha256").update(p).digest("hex"));
+
+  while (layer.length > 1) {
+    const next: string[] = [];
+    for (let i = 0; i < layer.length; i += 2) {
+      const left = layer[i]!;
+      const right = layer[i + 1] ?? left;
+      next.push(createHash("sha256").update(left + right).digest("hex"));
+    }
+    layer = next;
+  }
+
+  return layer[0]!;
 }
 
 function round4(n: number): number {

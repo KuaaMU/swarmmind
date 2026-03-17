@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { TxMonitor, TxStatus } from "../services/tx-monitor";
+import { TxMonitor } from "../services/tx-monitor";
 
 function createMockProvider() {
   return {

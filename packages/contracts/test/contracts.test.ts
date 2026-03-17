@@ -742,3 +742,206 @@ describe("ConsensusCommit", () => {
     });
   });
 });
+
+// ─── SwarmCommit ──────────────────────────────────────────────────────────────
+
+describe("SwarmCommit", () => {
+  async function deployFixture() {
+    const [committer, other] = await ethers.getSigners();
+    const SwarmCommit = await ethers.getContractFactory("SwarmCommit");
+    const swarmCommit = await SwarmCommit.deploy();
+    return { swarmCommit, committer, other };
+  }
+
+  const DECISION_HASH = ethers.encodeBytes32String("decision-hash-1");
+  const EVIDENCE_ROOT = ethers.encodeBytes32String("evidence-root-1");
+  const DOMAIN_ID = 0n; // liquidation_risk
+
+  describe("commitDecision", () => {
+    it("commits a new decision and emits DecisionCommitted", async () => {
+      const { swarmCommit, committer } = await loadFixture(deployFixture);
+
+      await expect(
+        swarmCommit.connect(committer).commitDecision(DECISION_HASH, EVIDENCE_ROOT, DOMAIN_ID),
+      )
+        .to.emit(swarmCommit, "DecisionCommitted")
+        .withArgs(DECISION_HASH, EVIDENCE_ROOT, DOMAIN_ID, committer.address, anyValue);
+
+      expect(await swarmCommit.committed(DECISION_HASH)).to.be.true;
+    });
+
+    it("rejects zero decisionHash", async () => {
+      const { swarmCommit, committer } = await loadFixture(deployFixture);
+
+      await expect(
+        swarmCommit
+          .connect(committer)
+          .commitDecision(ethers.ZeroHash, EVIDENCE_ROOT, DOMAIN_ID),
+      ).to.be.revertedWith("SwarmCommit: zero decisionHash");
+    });
+
+    it("rejects duplicate commitments", async () => {
+      const { swarmCommit, committer } = await loadFixture(deployFixture);
+
+      await swarmCommit
+        .connect(committer)
+        .commitDecision(DECISION_HASH, EVIDENCE_ROOT, DOMAIN_ID);
+
+      await expect(
+        swarmCommit
+          .connect(committer)
+          .commitDecision(DECISION_HASH, EVIDENCE_ROOT, DOMAIN_ID),
+      ).to.be.revertedWith("SwarmCommit: already committed");
+    });
+
+    it("allows different hashes to be committed independently", async () => {
+      const { swarmCommit, committer } = await loadFixture(deployFixture);
+      const hash2 = ethers.encodeBytes32String("decision-hash-2");
+
+      await swarmCommit
+        .connect(committer)
+        .commitDecision(DECISION_HASH, EVIDENCE_ROOT, DOMAIN_ID);
+      await swarmCommit.connect(committer).commitDecision(hash2, EVIDENCE_ROOT, DOMAIN_ID);
+
+      expect(await swarmCommit.committed(DECISION_HASH)).to.be.true;
+      expect(await swarmCommit.committed(hash2)).to.be.true;
+    });
+
+    it("returns false for uncommitted hash", async () => {
+      const { swarmCommit } = await loadFixture(deployFixture);
+      expect(await swarmCommit.committed(DECISION_HASH)).to.be.false;
+    });
+  });
+});
+
+// ─── SwarmChallenge ───────────────────────────────────────────────────────────
+
+describe("SwarmChallenge", () => {
+  async function deployFixture() {
+    const [owner, challenger, other] = await ethers.getSigners();
+    const SwarmChallenge = await ethers.getContractFactory("SwarmChallenge");
+    const swarmChallenge = await SwarmChallenge.deploy();
+    return { swarmChallenge, owner, challenger, other };
+  }
+
+  const DECISION_HASH = ethers.encodeBytes32String("sc-decision-1");
+
+  async function deployWithRegisteredCommit() {
+    const ctx = await deployFixture();
+    await ctx.swarmChallenge.connect(ctx.owner).registerCommit(DECISION_HASH);
+    return ctx;
+  }
+
+  describe("registerCommit", () => {
+    it("records the commit timestamp", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployFixture);
+      await swarmChallenge.connect(owner).registerCommit(DECISION_HASH);
+      const ts = await swarmChallenge.commitTime(DECISION_HASH);
+      expect(ts).to.be.greaterThan(0n);
+    });
+
+    it("does not overwrite an existing commit timestamp", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployFixture);
+      await swarmChallenge.connect(owner).registerCommit(DECISION_HASH);
+      const ts1 = await swarmChallenge.commitTime(DECISION_HASH);
+      await swarmChallenge.connect(owner).registerCommit(DECISION_HASH);
+      const ts2 = await swarmChallenge.commitTime(DECISION_HASH);
+      expect(ts1).to.equal(ts2);
+    });
+  });
+
+  describe("openChallenge", () => {
+    it("opens a challenge and emits ChallengeOpened", async () => {
+      const { swarmChallenge, challenger } = await loadFixture(deployWithRegisteredCommit);
+
+      await expect(swarmChallenge.connect(challenger).openChallenge(DECISION_HASH))
+        .to.emit(swarmChallenge, "ChallengeOpened")
+        .withArgs(0n, DECISION_HASH, challenger.address);
+
+      expect(await swarmChallenge.nextId()).to.equal(1n);
+    });
+
+    it("increments challenge ID for each new challenge", async () => {
+      const { swarmChallenge, challenger, other } =
+        await loadFixture(deployWithRegisteredCommit);
+
+      await swarmChallenge.connect(challenger).openChallenge(DECISION_HASH);
+      await swarmChallenge.connect(other).openChallenge(DECISION_HASH);
+
+      expect(await swarmChallenge.nextId()).to.equal(2n);
+    });
+
+    it("rejects challenge on unknown decision", async () => {
+      const { swarmChallenge, challenger } = await loadFixture(deployFixture);
+      const unknown = ethers.encodeBytes32String("unknown-decision");
+
+      await expect(
+        swarmChallenge.connect(challenger).openChallenge(unknown),
+      ).to.be.revertedWith("SwarmChallenge: unknown decision");
+    });
+
+    it("rejects challenge after window has passed", async () => {
+      const { swarmChallenge, challenger } = await loadFixture(deployWithRegisteredCommit);
+      const { time } = await import("@nomicfoundation/hardhat-toolbox/network-helpers");
+
+      // Fast-forward past the 1-day challenge window
+      await time.increase(2 * 24 * 60 * 60);
+
+      await expect(
+        swarmChallenge.connect(challenger).openChallenge(DECISION_HASH),
+      ).to.be.revertedWith("SwarmChallenge: challenge window passed");
+    });
+  });
+
+  describe("resolveChallenge", () => {
+    async function deployWithOpenChallenge() {
+      const ctx = await deployWithRegisteredCommit();
+      await ctx.swarmChallenge.connect(ctx.challenger).openChallenge(DECISION_HASH);
+      return ctx;
+    }
+
+    it("resolves a challenge as successful", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployWithOpenChallenge);
+
+      await expect(swarmChallenge.connect(owner).resolveChallenge(0n, true))
+        .to.emit(swarmChallenge, "ChallengeResolved")
+        .withArgs(0n, true);
+
+      const c = await swarmChallenge.challenges(0n);
+      expect(c.resolved).to.be.true;
+      expect(c.successful).to.be.true;
+    });
+
+    it("resolves a challenge as unsuccessful", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployWithOpenChallenge);
+
+      await swarmChallenge.connect(owner).resolveChallenge(0n, false);
+      const c = await swarmChallenge.challenges(0n);
+      expect(c.successful).to.be.false;
+    });
+
+    it("rejects double resolution", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployWithOpenChallenge);
+
+      await swarmChallenge.connect(owner).resolveChallenge(0n, true);
+      await expect(
+        swarmChallenge.connect(owner).resolveChallenge(0n, false),
+      ).to.be.revertedWith("SwarmChallenge: already resolved");
+    });
+
+    it("rejects resolution of non-existent challenge", async () => {
+      const { swarmChallenge, owner } = await loadFixture(deployFixture);
+      await expect(
+        swarmChallenge.connect(owner).resolveChallenge(99n, true),
+      ).to.be.revertedWith("SwarmChallenge: challenge not found");
+    });
+
+    it("rejects resolution from non-owner", async () => {
+      const { swarmChallenge, challenger } = await loadFixture(deployWithOpenChallenge);
+      await expect(
+        swarmChallenge.connect(challenger).resolveChallenge(0n, true),
+      ).to.be.revertedWith("SwarmChallenge: caller is not owner");
+    });
+  });
+});
+

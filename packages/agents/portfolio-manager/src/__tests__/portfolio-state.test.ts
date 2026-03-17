@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PortfolioStateManager } from "../services/portfolio-state";
 import * as fs from "fs";
 import type {
   TradingSignal,
-  RiskAssessment,
   TradeExecution,
   PaymentRecord,
   AgentStatus,

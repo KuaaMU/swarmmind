@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "copilot/**", "feat/**", "fix/**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ─── Lint ───────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint TypeScript
+        run: npm run lint
+
+  # ─── Typecheck + Test ───────────────────────────────────────────────────────
+  test:
+    name: Typecheck & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Build TypeScript packages (excluding contracts & dashboard)
+        run: npx turbo run build --filter='!@swarmmind/contracts' --filter='!@swarmmind/dashboard'
+
+      - name: Run tests
+        run: npx vitest run --reporter=verbose
+

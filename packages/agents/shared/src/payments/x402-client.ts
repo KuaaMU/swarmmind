@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { AgentWallet } from "../wallet/agent-wallet";
 
 export interface X402PaymentConfig {
