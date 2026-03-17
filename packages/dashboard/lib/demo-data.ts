@@ -5,6 +5,8 @@ import type {
   TradingSignal,
   RiskAssessment,
   TradeStatus,
+  ConsensusRound,
+  LiquidityPoolDash,
 } from "./types";
 
 const DEMO_ADDRESSES = {
@@ -159,6 +161,110 @@ export function createInitialTrades(): Trade[] {
       txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
       status: randomChoice(["COMPLETED", "COMPLETED", "COMPLETED", "PENDING"] as TradeStatus[]),
       timestamp: now - (5 - i) * 25000,
+    };
+  });
+}
+
+// ─── Consensus / CRCN demo data ──────────────────────────────────────────────
+
+const CONSENSUS_CLAIMS = [
+  "APPROVE_TRADE:OKB/USDC:BUY",
+  "REJECT_TRADE:WETH/USDC:SELL",
+  "APPROVE_TRADE:WETH/USDC:BUY",
+  "REDUCE_SIZE:OKB/USDC:BUY",
+  "APPROVE_TRADE:USDT/USDC:BUY",
+];
+
+let roundCounter = 0;
+
+function shortHash(): string {
+  return Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+export function createDemoConsensusRound(): ConsensusRound {
+  roundCounter += 1;
+  const totalProposals = randomBetween(3, 6) | 0;
+  const supportCount = Math.ceil(totalProposals * randomBetween(0.5, 1.0));
+  const weightedScore = parseFloat(randomBetween(0.6, 0.99).toFixed(4));
+  return {
+    roundId: `round-${roundCounter.toString().padStart(4, "0")}`,
+    finalClaim: randomChoice(CONSENSUS_CLAIMS),
+    weightedScore,
+    supportCount,
+    totalProposals,
+    commitHash: `0x${shortHash()}`,
+    challengeOpen: Math.random() < 0.15,
+    timestamp: Date.now(),
+  };
+}
+
+export function createInitialConsensusRounds(): ConsensusRound[] {
+  const now = Date.now();
+  return Array.from({ length: 6 }, (_, i) => {
+    const totalProposals = (randomBetween(3, 6) | 0);
+    const supportCount = Math.ceil(totalProposals * randomBetween(0.5, 1.0));
+    return {
+      roundId: `round-init-${i}`,
+      finalClaim: randomChoice(CONSENSUS_CLAIMS),
+      weightedScore: parseFloat(randomBetween(0.6, 0.99).toFixed(4)),
+      supportCount,
+      totalProposals,
+      commitHash: `0x${shortHash()}`,
+      challengeOpen: false,
+      timestamp: now - (6 - i) * 30000,
+    };
+  });
+}
+
+// ─── Liquidity pool demo data ─────────────────────────────────────────────────
+
+const POOL_PAIRS = [
+  { pair: "OKB/USDC", base: 2_000_000 },
+  { pair: "WETH/USDC", base: 8_000_000 },
+  { pair: "USDT/USDC", base: 15_000_000 },
+  { pair: "OKB/WETH", base: 500_000 },
+  { pair: "WBTC/USDC", base: 5_000_000 },
+] as const;
+
+export function createInitialLiquidityPools(): LiquidityPoolDash[] {
+  const now = Date.now();
+  return POOL_PAIRS.map(({ pair, base }, i) => {
+    const tvlUsd = base * randomBetween(0.8, 1.2);
+    const volume24hUsd = tvlUsd * randomBetween(0.01, 0.12);
+    const utilization = parseFloat(randomBetween(0.25, 0.75).toFixed(2));
+    const apy = parseFloat(randomBetween(2, 35).toFixed(2));
+    const priceImpactBps = Math.round((10_000 / (2 * tvlUsd)) * 10_000);
+    const liquidityScore = Math.max(
+      1,
+      Math.min(
+        10,
+        Math.round(
+          (Math.max(1, 10 - Math.floor(priceImpactBps / 100)) * 2 +
+            (volume24hUsd / tvlUsd < 0.005 ? 3 : volume24hUsd / tvlUsd > 0.5 ? 4 : 8) +
+            (utilization >= 0.3 && utilization <= 0.8 ? 8 : 4)) /
+            4
+        )
+      )
+    );
+    const recommendation: LiquidityPoolDash["recommendation"] =
+      tvlUsd < 100_000
+        ? "AVOID"
+        : priceImpactBps <= 10
+        ? "DEEP"
+        : priceImpactBps <= 50
+        ? "ADEQUATE"
+        : "SHALLOW";
+    return {
+      poolAddress: `0x${shortHash().slice(0, 40)}`,
+      tokenPair: pair,
+      tvlUsd,
+      volume24hUsd,
+      apy,
+      utilization,
+      liquidityScore,
+      priceImpactBps,
+      recommendation,
+      timestamp: now - i * 5000,
     };
   });
 }

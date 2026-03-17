@@ -108,7 +108,7 @@ contract ConsensusCommit is IConsensusCommit, Ownable {
     function finalize(bytes32 roundId) external override {
         CommitRecord storage rec = _commits[roundId];
         require(rec.anchoredAt != 0, "Round not found");
-        require(!rec.challenged, "Pending challenge – use resolveChallenge");
+        require(!rec.challenged, "Pending challenge - use resolveChallenge");
         require(!rec.finalized, "Already finalized");
         require(
             block.timestamp > rec.challengeExpiresAt,

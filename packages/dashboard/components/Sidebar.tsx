@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./icons/Logo";
-import { DashboardIcon, AgentsIcon, PaymentsIcon } from "./icons/NavIcons";
+import { DashboardIcon, AgentsIcon, PaymentsIcon, ConsensusIcon } from "./icons/NavIcons";
 import { WalletConnect } from "./WalletConnect";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: DashboardIcon },
   { href: "/agents", label: "Agents", icon: AgentsIcon },
   { href: "/payments", label: "Payments", icon: PaymentsIcon },
+  { href: "/consensus", label: "Consensus", icon: ConsensusIcon },
 ] as const;
 
 export function Sidebar() {

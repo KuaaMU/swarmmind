@@ -47,3 +47,13 @@ export function SettingsIcon({ size = 20, className }: NavIconProps) {
     </svg>
   );
 }
+
+export function ConsensusIcon({ size = 20, className }: NavIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" className={className}>
+      <circle cx="10" cy="10" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2" />
+      <path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}

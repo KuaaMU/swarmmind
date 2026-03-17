@@ -1,5 +1,6 @@
-import { expect, anyValue } from "chai";
+import { expect } from "chai";
 import { ethers } from "hardhat";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 
 describe("AgentRegistry", () => {
@@ -518,9 +519,10 @@ describe("ConsensusCommit", () => {
       const roundId = randomBytes32();
       const commitHash = randomBytes32();
 
-      await expect(contract.connect(submitter).anchor(roundId, commitHash, WINDOW))
+      const tx = await contract.connect(submitter).anchor(roundId, commitHash, WINDOW);
+      await expect(tx)
         .to.emit(contract, "CommitAnchored")
-        .withArgs(roundId, commitHash, submitter.address, anyValue());
+        .withArgs(roundId, commitHash, submitter.address, anyValue);
 
       const rec = await contract.getCommit(roundId);
       expect(rec.commitHash).to.equal(commitHash);
@@ -695,7 +697,7 @@ describe("ConsensusCommit", () => {
       await ethers.provider.send("evm_mine", []);
 
       await expect(contract.finalize(roundId)).to.be.revertedWith(
-        "Pending challenge",
+        "Pending challenge - use resolveChallenge",
       );
     });
   });

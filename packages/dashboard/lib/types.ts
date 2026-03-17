@@ -87,3 +87,29 @@ export const AGENT_LABELS: Record<string, string> = {
   "risk-oracle": "Oracle",
   "trade-executor": "Exec",
 };
+
+// ===== Consensus / CRCN types =====
+
+export interface ConsensusRound {
+  roundId: string;
+  finalClaim: string;
+  weightedScore: number;
+  supportCount: number;
+  totalProposals: number;
+  commitHash: string;
+  challengeOpen: boolean;
+  timestamp: number;
+}
+
+export interface LiquidityPoolDash {
+  poolAddress: string;
+  tokenPair: string;
+  tvlUsd: number;
+  volume24hUsd: number;
+  apy: number;
+  utilization: number;
+  liquidityScore: number;
+  priceImpactBps: number;
+  recommendation: "DEEP" | "ADEQUATE" | "SHALLOW" | "AVOID";
+  timestamp: number;
+}
