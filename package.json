@@ -13,6 +13,8 @@
     "packages/agents/portfolio-manager",
     "packages/agents/liquidity-agent",
     "packages/consensus",
+    "packages/mcp-server",
+    "packages/cli",
     "packages/dashboard"
   ],
   "scripts": {

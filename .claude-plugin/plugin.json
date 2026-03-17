@@ -1,0 +1,6 @@
+{
+  "name": "swarmmind",
+  "version": "1.0.0",
+  "description": "Multi-agent DeFi intelligence network on X Layer with x402 micropayments",
+  "skills": ["./skills/"]
+}

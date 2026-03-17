@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "swarmmind": {
+      "command": "npx",
+      "args": ["ts-node", "packages/mcp-server/src/index.ts"],
+      "env": {
+        "PORTFOLIO_MANAGER_URL": "http://localhost:3000",
+        "ALPHA_SCOUT_URL": "http://localhost:3001",
+        "RISK_ORACLE_URL": "http://localhost:3002",
+        "TRADE_EXECUTOR_URL": "http://localhost:3003"
+      }
+    }
+  }
+}
