@@ -7,7 +7,6 @@ import {
   type TradingSignal,
   type ApiResponse,
   type RiskAssessment,
-  type AgentProposal,
 } from "@swarmmind/shared";
 import type { RiskEvaluator } from "./services/risk-evaluator";
 import type { VolatilityCalculator, VolatilityMetrics } from "./services/volatility-calculator";
@@ -99,34 +98,6 @@ export function createServer(deps: ServerDeps): express.Application {
       }
     },
   );
-
-  // --- Consensus proposal endpoint (free – no payment required) ---
-
-  app.post("/consensus/propose", async (req, res) => {
-    try {
-      const signal = validateTradingSignal(req.body);
-      const { assessment, proposal } = await deps.riskEvaluator.assessAndPropose(signal);
-
-      const response: ApiResponse<{ assessment: RiskAssessment; proposal: AgentProposal }> = {
-        success: true,
-        data: { assessment, proposal },
-        error: null,
-        timestamp: Date.now(),
-      };
-      res.json(response);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Consensus propose failed";
-      console.error("Consensus propose error:", message);
-
-      const response: ApiResponse<null> = {
-        success: false,
-        data: null,
-        error: message,
-        timestamp: Date.now(),
-      };
-      res.status(400).json(response);
-    }
-  });
 
   app.get(
     "/metrics/volatility/:token",

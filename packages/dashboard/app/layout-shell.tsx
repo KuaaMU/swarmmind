@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Sidebar } from "../components/Sidebar";
 
-const SHELL_ROUTES = ["/dashboard", "/agents", "/payments", "/consensus"];
+const SHELL_ROUTES = ["/dashboard", "/agents", "/payments"];
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

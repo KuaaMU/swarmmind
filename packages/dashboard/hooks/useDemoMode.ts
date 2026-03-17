@@ -7,8 +7,6 @@ import type {
   Trade,
   TradingSignal,
   PortfolioSummary,
-  ConsensusRound,
-  LiquidityPoolDash,
 } from "../lib/types";
 import {
   createDemoAgents,
@@ -18,9 +16,6 @@ import {
   createDemoTrade,
   createInitialPayments,
   createInitialTrades,
-  createDemoConsensusRound,
-  createInitialConsensusRounds,
-  createInitialLiquidityPools,
 } from "../lib/demo-data";
 
 interface DemoState {
@@ -29,8 +24,6 @@ interface DemoState {
   trades: Trade[];
   signals: TradingSignal[];
   summary: PortfolioSummary;
-  consensusRounds: ConsensusRound[];
-  liquidityPools: LiquidityPoolDash[];
   isDemo: true;
 }
 
@@ -47,12 +40,6 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
   const [trades, setTrades] = useState<Trade[]>(() => createInitialTrades());
   const [signals, setSignals] = useState<TradingSignal[]>([]);
   const [orchestrationStep, setOrchestrationStep] = useState<OrchestrationStep>("IDLE");
-  const [consensusRounds, setConsensusRounds] = useState<ConsensusRound[]>(
-    () => createInitialConsensusRounds()
-  );
-  const [liquidityPools] = useState<LiquidityPoolDash[]>(
-    () => createInitialLiquidityPools()
-  );
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateAgentFinancials = useCallback(
@@ -119,10 +106,6 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
       setPayments((prev) => [paymentToOracle, ...prev].slice(0, 50));
       updateAgentFinancials("Risk Oracle", "Portfolio Manager", 0.002);
 
-      // Emit a consensus round after risk assessment
-      const round = createDemoConsensusRound();
-      setConsensusRounds((prev) => [round, ...prev].slice(0, 20));
-
       // Step 3: Trade executed (after another 2s)
       timeoutRef.current = setTimeout(() => {
         const trade = createDemoTrade(signal.id);
@@ -181,8 +164,6 @@ export function useDemoMode(): DemoState & { orchestrationStep: OrchestrationSte
     trades,
     signals,
     summary,
-    consensusRounds,
-    liquidityPools,
     isDemo: true,
     orchestrationStep,
   };

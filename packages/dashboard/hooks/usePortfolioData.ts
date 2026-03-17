@@ -8,8 +8,6 @@ import type {
   TradingSignal,
   PortfolioSummary,
   PortfolioData,
-  ConsensusRound,
-  LiquidityPoolDash,
 } from "../lib/types";
 import { useDemoMode } from "./useDemoMode";
 
@@ -21,8 +19,6 @@ type ConnectionStatus = "live" | "demo" | "offline";
 interface PortfolioHookResult extends PortfolioData {
   connectionStatus: ConnectionStatus;
   orchestrationStep: string;
-  consensusRounds: ConsensusRound[];
-  liquidityPools: LiquidityPoolDash[];
 }
 
 function useRealData(): {
@@ -45,7 +41,7 @@ function useRealData(): {
         summary: {
           totalValue: json.data?.totalValue || 0,
           pnl24h: 0,
-          activeAgents: agentStatuses.filter((a: AgentStatus) => a.isOnline).length,
+          activeAgents: agentStatuses.filter((a) => a.isOnline).length,
           totalPayments: json.data?.recentPayments?.length || 0,
         },
         agents: agentStatuses,
@@ -119,8 +115,6 @@ export function usePortfolioData(): PortfolioHookResult {
       ...realData,
       connectionStatus: "live",
       orchestrationStep: "IDLE",
-      consensusRounds: [],
-      liquidityPools: [],
     };
   }
 
@@ -134,7 +128,5 @@ export function usePortfolioData(): PortfolioHookResult {
     isDemo: true,
     connectionStatus: "demo",
     orchestrationStep: demoData.orchestrationStep,
-    consensusRounds: demoData.consensusRounds,
-    liquidityPools: demoData.liquidityPools,
   };
 }

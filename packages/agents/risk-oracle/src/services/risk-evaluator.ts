@@ -4,7 +4,6 @@ import {
   type TradingSignal,
   type RiskAssessment,
   type RiskRecommendation,
-  type AgentProposal,
 } from "@swarmmind/shared";
 import type { VolatilityCalculator, VolatilityMetrics } from "./volatility-calculator";
 
@@ -21,14 +20,11 @@ export class RiskEvaluator {
   private readonly ai: AIClient;
   private readonly volatilityCalc: VolatilityCalculator;
   private assessmentCache: readonly RiskAssessment[];
-  /** Stable identifier used when this evaluator participates in consensus rounds. */
-  readonly agentId: string;
 
-  constructor(ai: AIClient, volatilityCalc: VolatilityCalculator, agentId = "risk-oracle") {
+  constructor(ai: AIClient, volatilityCalc: VolatilityCalculator) {
     this.ai = ai;
     this.volatilityCalc = volatilityCalc;
     this.assessmentCache = [];
-    this.agentId = agentId;
   }
 
   async assessTrade(signal: TradingSignal): Promise<RiskAssessment> {
@@ -52,32 +48,6 @@ export class RiskEvaluator {
 
     this.addToCache(assessment);
     return assessment;
-  }
-
-  /**
-   * Assess a trade AND convert the result into an AgentProposal suitable for
-   * submission to a ConsensusEngine round.
-   *
-   * The proposal's `claim` is the risk recommendation string
-   * ("PROCEED" | "CAUTION" | "REJECT").  The `confidence` is derived from the
-   * inverse risk score: confidence = 1 - (riskScore - 1) / 9, so a riskScore
-   * of 1 → confidence 1.0 and a riskScore of 10 → confidence 0.0.
-   */
-  async assessAndPropose(signal: TradingSignal): Promise<{
-    assessment: RiskAssessment;
-    proposal: AgentProposal;
-  }> {
-    const assessment = await this.assessTrade(signal);
-    const proposal: AgentProposal = {
-      agentId: this.agentId,
-      agentRole: "RISK",
-      claim: assessment.recommendation,
-      payload: assessment,
-      confidence: riskScoreToConfidence(assessment.riskScore),
-      evidencePointers: [signal.id, signal.tokenPair],
-      timestamp: assessment.timestamp,
-    };
-    return { assessment, proposal };
   }
 
   getRecentAssessments(): readonly RiskAssessment[] {
@@ -116,14 +86,6 @@ function normalizeRecommendation(rec: string): RiskRecommendation {
     return upper;
   }
   return "CAUTION";
-}
-
-/**
- * Map a 1–10 risk score to a [0, 1] confidence value.
- * Lower risk → higher confidence that the recommendation is actionable.
- */
-function riskScoreToConfidence(riskScore: number): number {
-  return Math.round((1 - (riskScore - 1) / 9) * 100) / 100;
 }
 
 function buildAssessmentPrompt(
