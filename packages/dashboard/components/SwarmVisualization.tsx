@@ -49,9 +49,11 @@ const INITIAL_EDGES: Edge[] = [
 export function SwarmVisualization({
   agents,
   payments,
+  activeToolCall,
 }: {
   agents: AgentStatus[];
   payments: Payment[];
+  activeToolCall?: string | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<Node[]>([]);
@@ -193,8 +195,19 @@ export function SwarmVisualization({
 
     // Draw nodes
     const nodeRadius = 36;
+    const toolAgentMap: Record<string, string> = {
+      get_market_signals: "alpha-scout",
+      assess_risk: "risk-oracle",
+      assess_liquidity: "risk-oracle",
+      execute_trade: "trade-executor",
+      get_portfolio_state: "portfolio-manager",
+      check_agent_status: "portfolio-manager",
+    };
+    const activeAgentId = activeToolCall ? toolAgentMap[activeToolCall] : null;
+
     nodesRef.current.forEach((node) => {
       const color = ROLE_COLORS[node.role] || "#6b7280";
+      const isActiveTarget = node.id === activeAgentId;
 
       // Outer glow halo for online nodes
       if (node.isOnline) {
@@ -202,12 +215,30 @@ export function SwarmVisualization({
           node.x, node.y, nodeRadius * 0.8,
           node.x, node.y, nodeRadius * 2.5
         );
-        glowGrad.addColorStop(0, color + "15");
+        const glowColor = isActiveTarget ? "#22d3ee" : color;
+        glowGrad.addColorStop(0, glowColor + "15");
         glowGrad.addColorStop(1, "transparent");
         ctx.beginPath();
         ctx.arc(node.x, node.y, nodeRadius * 2.5, 0, Math.PI * 2);
         ctx.fillStyle = glowGrad;
         ctx.fill();
+      }
+
+      // Active tool call highlight ring
+      if (isActiveTarget) {
+        const pulsePhase = (Math.sin(now / 300) + 1) / 2;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, nodeRadius + 6 + pulsePhase * 4, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(34, 211, 238, ${0.5 + pulsePhase * 0.3})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner bright ring
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, nodeRadius + 2, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(34, 211, 238, 0.6)`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
 
       // Node circle with fill
@@ -260,7 +291,7 @@ export function SwarmVisualization({
     });
 
     animFrameRef.current = requestAnimationFrame(draw);
-  }, [size]);
+  }, [size, activeToolCall]);
 
   useEffect(() => {
     animFrameRef.current = requestAnimationFrame(draw);

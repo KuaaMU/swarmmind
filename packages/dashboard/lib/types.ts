@@ -88,6 +88,28 @@ export const AGENT_LABELS: Record<string, string> = {
   "trade-executor": "Exec",
 };
 
+// ===== ReAct Reasoning types =====
+
+export interface ReasoningToolCall {
+  name: string;
+  input: Record<string, unknown>;
+  result: string;
+}
+
+export interface ReasoningStep {
+  iteration: number;
+  text: string;
+  toolCalls: ReasoningToolCall[];
+  timestamp: number;
+}
+
+export interface ReasoningTrace {
+  startedAt: number;
+  completedAt: number;
+  steps: ReasoningStep[];
+  summary: string;
+}
+
 // ===== Consensus / CRCN types =====
 
 export interface ConsensusRound {
