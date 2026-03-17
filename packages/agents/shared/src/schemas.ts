@@ -134,6 +134,8 @@ export const ConsensusResultSchema = z.object({
   challengeOpen: z.boolean(),
   /** Block timestamp when challenge window closes (0 = no challenge) */
   challengeExpiresAt: z.number().int().nonnegative(),
+  /** Merkle root (SHA-256) computed over all evidence pointer hashes from winning proposals */
+  evidenceRoot: z.string().regex(/^[0-9a-f]{64}$/, "must be a 64-char hex SHA-256").optional(),
   /** keccak256 of (finalClaim + weightedScore + roundId) for on-chain commit */
   commitHash: z.string().optional(),
   timestamp: z.number().int().positive(),

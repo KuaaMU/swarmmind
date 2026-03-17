@@ -9,13 +9,14 @@ function makeProposal(
   agentRole: AgentProposal["agentRole"],
   claim: string,
   confidence: number,
+  evidencePointers: string[] = [],
 ): AgentProposal {
   return {
     agentId,
     agentRole,
     claim,
     confidence,
-    evidencePointers: [],
+    evidencePointers,
     timestamp: Date.now(),
   };
 }
@@ -67,6 +68,22 @@ describe("ConsensusEngine – basic weighted voting", () => {
     const r2 = engine.run("round-id-x", proposals);
     expect(r1.commitHash).toBe(r2.commitHash);
     expect(r1.commitHash).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("produces a deterministic evidenceRoot", () => {
+    const proposals = [makeProposal("a1", "RISK", "REJECT", 0.9)];
+    const r1 = engine.run("round-id-ev", proposals);
+    const r2 = engine.run("round-id-ev", proposals);
+    expect(r1.evidenceRoot).toBe(r2.evidenceRoot);
+    expect(r1.evidenceRoot).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("evidenceRoot differs when evidence pointers differ", () => {
+    const p1 = [makeProposal("a1", "RISK", "REJECT", 0.9, ["tx1", "tx2"])];
+    const p2 = [makeProposal("a1", "RISK", "REJECT", 0.9, ["tx3"])];
+    const r1 = engine.run("ev-round-a", p1);
+    const r2 = engine.run("ev-round-b", p2);
+    expect(r1.evidenceRoot).not.toBe(r2.evidenceRoot);
   });
 
   it("result passes ConsensusResultSchema validation (roundtrip)", () => {
