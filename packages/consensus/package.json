@@ -1,5 +1,5 @@
 {
-  "name": "@swarmmind/shared",
+  "name": "@swarmmind/consensus",
   "version": "0.1.0",
   "private": true,
   "main": "dist/index.js",
@@ -10,13 +10,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
-    "ethers": "^6.13.0",
-    "dotenv": "^16.4.0",
+    "@swarmmind/shared": "*",
     "zod": "~3.25.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "vitest": "^4.1.0"
   }
 }

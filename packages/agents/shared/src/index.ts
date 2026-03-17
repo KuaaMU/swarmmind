@@ -31,7 +31,7 @@ export type { TokenPrice } from "./okx/market-api";
 export { TradeApiClient } from "./okx/trade-api";
 export type { SwapQuote, TradeApiConfig } from "./okx/trade-api";
 
-// Types
+// Types (legacy – backward compatible)
 export type {
   AgentRole,
   AgentInfo,
@@ -51,3 +51,34 @@ export type {
   RiskTolerance,
   ApiResponse,
 } from "./types";
+
+// Schemas (Zod) + derived types — preferred for new code
+export {
+  AgentRoleSchema,
+  AgentInfoSchema,
+  SignalTypeSchema,
+  TradingSignalSchema,
+  RiskRecommendationSchema,
+  RiskAssessmentSchema,
+  LiquidityPoolSchema,
+  LiquidityAssessmentSchema,
+  AgentProposalSchema,
+  ConsensusResultSchema,
+  TradeStatusSchema,
+  TradeExecutionSchema,
+  PaymentRecordSchema,
+  PositionSchema,
+  AgentStatusSchema,
+  PortfolioStateSchema,
+  WsMessageTypeSchema,
+  WsMessageSchema,
+  RiskToleranceSchema,
+  UserStrategySchema,
+  ApiResponseSchema,
+} from "./schemas";
+export type {
+  AgentProposal,
+  ConsensusResult,
+  LiquidityPool,
+  LiquidityAssessment,
+} from "./schemas";
