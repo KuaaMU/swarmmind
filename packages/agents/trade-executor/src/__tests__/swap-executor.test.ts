@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { SwapExecutor, SwapRequest } from "../services/swap-executor";
-import type { TradeApiClient, AgentWallet, TradeExecution } from "@swarmmind/shared";
+import type { TradeApiClient, AgentWallet } from "@swarmmind/shared";
 
 function createMockTradeApi(): TradeApiClient {
   return {

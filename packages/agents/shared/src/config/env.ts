@@ -6,14 +6,6 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 dotenv.config({ path: path.resolve(process.cwd(), "../../../.env") });
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
-  return value;
-}
-
 /**
  * Read an env var, returning empty string if missing.
  * Use for keys that are validated at service startup, not at import time.
@@ -24,22 +16,6 @@ function lazyEnv(name: string): string {
 
 function optionalEnv(name: string, defaultValue: string): string {
   return process.env[name] || defaultValue;
-}
-
-/**
- * Resolve the AI API key based on the selected provider.
- * Allows each agent to potentially use a different provider.
- */
-function resolveAIKey(): string {
-  const provider = optionalEnv("AI_PROVIDER", "anthropic");
-  const keyMap: Record<string, string> = {
-    anthropic: "ANTHROPIC_API_KEY",
-    openai: "OPENAI_API_KEY",
-    deepseek: "DEEPSEEK_API_KEY",
-    openrouter: "OPENROUTER_API_KEY",
-  };
-  const envVar = keyMap[provider] || "ANTHROPIC_API_KEY";
-  return requireEnv(envVar);
 }
 
 export const env = {

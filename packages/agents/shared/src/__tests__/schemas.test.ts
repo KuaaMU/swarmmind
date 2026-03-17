@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   AgentRoleSchema,
-  AgentInfoSchema,
   TradingSignalSchema,
   RiskAssessmentSchema,
   LiquidityPoolSchema,

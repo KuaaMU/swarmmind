@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { IntentParser } from "../services/intent-parser";
-import type { AIClient, UserStrategy } from "@swarmmind/shared";
+import type { AIClient } from "@swarmmind/shared";
 
 function createMockAI(): AIClient {
   return {

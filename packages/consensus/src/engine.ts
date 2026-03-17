@@ -272,6 +272,12 @@ function buildCommitHash(roundId: string, claim: string, score: number): string 
  *     odd-length layers.
  *  4. Return the single root hash.
  *
+ * Note: The lexicographic sort in step 1 deviates from conventional Merkle
+ * trees (which preserve insertion order).  Here determinism matters more than
+ * ordering — the evidence root exists solely to allow on-chain verification
+ * that a specific set of evidence pointers was used in a round, regardless of
+ * the order in which agents submitted them.
+ *
  * An empty input set returns SHA-256("").
  */
 function buildEvidenceRoot(evidencePointers: readonly string[]): string {
